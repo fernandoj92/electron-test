@@ -13,6 +13,7 @@ const fs = require('fs');
 // be closed automatically when the javascript object is GCed.
 let mainWindow;
 let application_menu;
+let secondaryWindows = [];
 
 function createMainWindow(){
 
@@ -20,7 +21,8 @@ function createMainWindow(){
   mainWindow = new BrowserWindow({width: 800, height: 600})
 
   // and load the index.html of the app.
-  mainWindow.loadURL('file://' + __dirname + '/views/main.html');
+  //mainWindow.loadURL('file://' + __dirname + '/views/main.html');
+  mainWindow.loadURL('file://' + __dirname + '/views/secondWindow/secondWindow.html');
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
@@ -80,6 +82,18 @@ function createApplicationMenu() {
       ]
     },
     {
+      label: 'View',
+      submenu: [
+        {
+          label: 'Second Window',
+          accelerator: 'CmdOrCtrl+W',
+          click: () => {
+            createSecondaryWindow();
+          }
+        }
+      ]
+    },
+    {
       label: 'Debug',
       submenu: [
         {
@@ -110,6 +124,24 @@ function createApplicationMenu() {
   ];
 
   return application_menu;
+}
+
+function createSecondaryWindow(){
+  // Create the browser window.
+  let secondaryWindow = new BrowserWindow({width: 400, height: 400})
+
+  // and load the index.html of the app.
+  secondaryWindow.loadURL('file://' + __dirname + '/views/secondWindow/secondWindow.html');
+
+  secondaryWindows.push(secondaryWindow);
+
+  secondaryWindow.show();
+
+  // Emitted when the window is closed.
+  secondaryWindow.on('closed', function () {
+    // Dereference the window object.
+    secondaryWindow = null
+  })
 }
 
 
