@@ -24,9 +24,6 @@ function createMainWindow(){
   //mainWindow.loadURL('file://' + __dirname + '/views/main.html');
   mainWindow.loadURL('file://' + __dirname + '/views/secondWindow/secondWindow.html');
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools()
-
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
