@@ -50,9 +50,36 @@ function createApplicationMenu() {
             function (fileNames) {
               if (fileNames === undefined) return;
               let fileName = fileNames[0];
-              fs.readFile(fileName, 'utf-8', function (err, data) {
-                //document.getElementById("editor").value = data;
-                console.log(data);
+              fs.readFile(fileName, 'utf-8', function (err, fileData) {
+                try{
+                  var jsonContent = JSON.parse(fileData);
+                  // Enviamos el contenido a Cytoscape
+                  //console.log(jsonContent);
+                  function createBnWindow(){
+                    let bnWindow = new BrowserWindow({width: 800, height: 600})
+
+                    bnWindow.loadURL('file://' + __dirname + '/views/bnWindow/bnWindow.html');
+                    secondaryWindows.push(bnWindow);
+                    bnWindow.show();
+
+                    // Emitted when the window is closed.
+                    bnWindow.on('closed', function () {
+                      // Dereference the window object.
+                    bnWindow = null
+                    })
+
+                    return bnWindow;
+                  }
+
+                  // Creamos la ventana donde se mostrara la red bayesiana
+                  let bnWindow = createBnWindow();
+                  // Le pasamos mediante el webContents el contenido de la red
+                  bnWindow.webContents.on('did-finish-load', () => {
+                    bnWindow.webContents.send('load-BN', jsonContent)
+                  })
+                }catch(e){
+                    console.log(e); //There was an error while parsing
+                }
               });
             }); 
           }
@@ -140,7 +167,6 @@ function createSecondaryWindow(){
     secondaryWindow = null
   })
 }
-
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
